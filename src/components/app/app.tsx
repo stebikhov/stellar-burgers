@@ -1,32 +1,135 @@
-import { ConstructorPage } from '@pages';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import {
+  ConstructorPage,
+  Feed,
+  ForgotPassword,
+  Login,
+  NotFound404,
+  Profile,
+  ProfileOrders,
+  Register,
+  ResetPassword
+} from '@pages';
 import '../../index.css';
 import styles from './app.module.css';
-
-import { AppHeader } from '@components';
-import { Preloader } from '@ui';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import ProtectedRoute from '../protectedRoute/protectedRoute';
+import { fetchUser, setAuthChecked } from '../../services/slices/authSlice';
+import { Preloader } from '../ui/preloader';
 
 const App = () => {
-  /** TODO: взять переменные из стора */
-  const isIngredientsLoading = false;
-  const ingredients = [];
-  const error = null;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isAuthChecked = useSelector((state) => state.auth.isAuthChecked);
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      dispatch(setAuthChecked());
+      return;
+    }
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  const handleModalClose = () => {
+    navigate(-1);
+  };
+
+  if (!isAuthChecked) {
+    return (
+      <div className={styles.app}>
+        <AppHeader />
+        <Preloader />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      {isIngredientsLoading ? (
-        <Preloader />
-      ) : error ? (
-        <div className={`${styles.error} text text_type_main-medium pt-4`}>
-          {error}
-        </div>
-      ) : ingredients.length > 0 ? (
-        <ConstructorPage />
-      ) : (
-        <div className={`${styles.title} text text_type_main-medium pt-4`}>
-          Нет игредиентов
-        </div>
-      )}
+      <Routes>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute anonymous>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute anonymous>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute anonymous>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute anonymous>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/feed/:number'
+          element={
+            <Modal title='' onClose={handleModalClose}>
+              <OrderInfo />
+            </Modal>
+          }
+        />
+        <Route
+          path='/ingredients/:id'
+          element={
+            <Modal title='' onClose={handleModalClose}>
+              <IngredientDetails />
+            </Modal>
+          }
+        />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <Modal title='' onClose={handleModalClose}>
+                <OrderInfo />
+              </Modal>
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
     </div>
   );
 };
