@@ -10,6 +10,7 @@ type TOrdersState = {
   isLoading: boolean;
   orderRequest: boolean;
   orderModalData: TOrder | null;
+  isNewOrder: boolean;
   error: null | SerializedError;
   data: TOrder[];
 };
@@ -18,6 +19,7 @@ export const initialState: TOrdersState = {
   isLoading: false,
   orderRequest: false,
   orderModalData: null,
+  isNewOrder: false,
   error: null,
   data: []
 };
@@ -52,6 +54,7 @@ const orderSlice = createSlice({
   reducers: {
     resetOrderModalData(state) {
       state.orderModalData = null;
+      state.isNewOrder = false;
     }
   },
   extraReducers: (builder) => {
@@ -77,6 +80,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrder.fulfilled, (state, action) => {
         state.orderModalData = action.payload;
+        state.isNewOrder = false;
         state.isLoading = false;
       })
       .addCase(createOrder.pending, (state) => {
@@ -88,6 +92,7 @@ const orderSlice = createSlice({
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.orderModalData = action.payload.order;
+        state.isNewOrder = true;
         state.orderRequest = false;
       });
   }
