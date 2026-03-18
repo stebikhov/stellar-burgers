@@ -7,7 +7,6 @@ import {
   createOrder,
   resetOrderModalData
 } from '../../services/slices/orderSlice';
-import { resetConstructor } from '../../services/slices/constructorSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
@@ -43,7 +42,6 @@ export const BurgerConstructor: FC = () => {
 
   const closeOrderModal = () => {
     dispatch(resetOrderModalData());
-    dispatch(resetConstructor());
   };
 
   const price = useMemo(
