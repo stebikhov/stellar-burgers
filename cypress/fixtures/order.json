@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "name": "Space флюоресцентный бургер",
+  "order": {
+    "_id": "67890abcdef1234567890123",
+    "status": "done",
+    "name": "Space флюоресцентный бургер",
+    "createdAt": "2026-04-20T10:30:00.000Z",
+    "updatedAt": "2026-04-20T10:30:00.000Z",
+    "number": 12345,
+    "ingredients": ["bulka-bottom", "burger-patty", "sauce-02", "bulka-bottom"]
+  }
+}
