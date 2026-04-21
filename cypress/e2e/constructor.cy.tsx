@@ -47,15 +47,15 @@ describe('Тестирование конструктора бургеров', (
   };
 
   const setAuthTokens = () => {
+    cy.setCookie('accessToken', 'mock-access-token');
     cy.window().then((window) => {
-      window.localStorage.setItem('accessToken', 'mock-access-token');
       window.localStorage.setItem('refreshToken', 'mock-refresh-token');
     });
   };
 
   const clearAuthTokens = () => {
+    cy.clearCookie('accessToken');
     cy.window().then((window) => {
-      window.localStorage.removeItem('accessToken');
       window.localStorage.removeItem('refreshToken');
     });
   };
